@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "ws2812.pio.h" // biblioteca para usar ws2812
 #include "matriz_leds.h"
+#include "setup.h"
 
 int main() {
 

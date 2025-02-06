@@ -11,7 +11,7 @@ const uint pino_botao_a = 5; // pino do botao A
 const uint pino_botao_b = 6; // pino do botao B
 const uint pino_matriz_leds = 7; // pino da matriz de leds
 
-volatile uint32_t ultimo_tempo = 0;
+uint32_t ultimo_tempo = 0;
 
 
 void gpio_irq_handler(uint gpio, uint32_t events); // prototipo da função para tratar a interrupção dos botoes
@@ -33,15 +33,28 @@ int main() {
     gpio_set_irq_enabled_with_callback(pino_botao_b, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler); // botao B
 
     while (true) {
-        printf("Hello World.\n");
-        sleep_ms(500);
+        tight_loop_contents();
     }
 
 
 }
 
-
-
+/*
+* Função para interrupção dos botoes
+*/
 void gpio_irq_handler(uint gpio, uint32_t events) {
+
+    if (!(debouce(&ultimo_tempo))) { // fazendo o debouce dos botoes
+        return;
+    }
+
+    uint pino_led = gpio == pino_botao_a ? pino_led_verde : pino_led_azul; // selecionando o pino do led
+    
+    bool proximo_estado_led = !(gpio_get(pino_led)); // trocando o estado
+    gpio_put(pino_led, proximo_estado_led);
+
+    printf("O Led %s está %s.\n", pino_led == pino_led_verde ? "Verde" : "Azul", 
+            proximo_estado_led == true ? "ON" : "OFF"); // mensagem informativa
+
     return;
 }

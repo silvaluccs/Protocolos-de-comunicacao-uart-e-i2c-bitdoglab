@@ -5,7 +5,10 @@
 #include "setup.h"
 #include "debouce.h"
 #include "hardware/timer.h"
+#include "hardware/i2c.h"
 #include "pico/bootrom.h"
+#include "ssd1306.h"
+#include "font.h"
 
 const uint pino_led_azul = 12; // pino do led azul
 const uint pino_led_verde = 11;
@@ -30,6 +33,9 @@ int main() {
     setup_botoes(pino_botao_a, pino_botao_b); // inicializando os botoes
     setup_matriz_leds(pino_matriz_leds);  // inicializando a matriz de leds
 
+    setup_display();
+    ssd1306_t ssd;
+    init_display(&ssd);
 
     // timer para verificar se tem letra nova
     struct repeating_timer timer;

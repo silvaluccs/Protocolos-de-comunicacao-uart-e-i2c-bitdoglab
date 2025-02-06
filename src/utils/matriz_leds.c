@@ -112,10 +112,8 @@ static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b)
 * Função para desenhar um número especifico na matriz de leds
 */
 void desenhar_numero_na_matriz_de_leds(uint8_t r, uint8_t g, uint8_t b, char numero_atual) {
-
     // desenhando o numero atual na matriz de leds
-    switch(numero_atual) {
-
+    switch (numero_atual) {
         case '0':
             desenhar(r, g, b, buffer_numero_zero);
             break;
@@ -155,10 +153,21 @@ void desenhar_numero_na_matriz_de_leds(uint8_t r, uint8_t g, uint8_t b, char num
 /*
 * Função para enviar um desenho para matriz de leds
 */
-static void desenhar(uint8_t r, uint8_t g, uint8_t b, bool *frame_numero_atual)
+void desenhar(uint8_t r, uint8_t g, uint8_t b, bool *frame_numero_atual)
 {
+
+
     // Define a cor com base nos parâmetros fornecidos
     uint32_t cor = urgb_u32(r, g, b);
+
+
+    if (frame_numero_atual == NULL) {
+        for (int i = 0; i < numero_pixels; i++) {
+            colocar_pixel(cor);  // Desliga os LEDs com zero no buffer
+        }
+        return;
+    }
+
 
     // Define todos os LEDs com a cor especificada
     for (int i = 0; i < numero_pixels; i++)

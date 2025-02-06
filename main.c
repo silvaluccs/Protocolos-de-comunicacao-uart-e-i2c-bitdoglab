@@ -4,6 +4,7 @@
 #include "matriz_leds.h"
 #include "setup.h"
 #include "debouce.h"
+#include "hardware/timer.h"
 
 const uint pino_led_azul = 12; // pino do led azul
 const uint pino_led_verde = 11;
@@ -13,6 +14,7 @@ const uint pino_matriz_leds = 7; // pino da matriz de leds
 
 uint32_t ultimo_tempo = 0;
 
+bool repeating_timer_callback(struct repeating_timer *t);
 
 void gpio_irq_handler(uint gpio, uint32_t events); // prototipo da função para tratar a interrupção dos botoes
 
@@ -28,9 +30,14 @@ int main() {
     setup_matriz_leds(pino_matriz_leds);  // inicializando a matriz de leds
 
 
+    // timer para verificar se tem letra nova
+    struct repeating_timer timer;
+    add_repeating_timer_ms(500, repeating_timer_callback, NULL, &timer);
+
     // definindo uma interrupção para os botoes na borda de descida
     gpio_set_irq_enabled_with_callback(pino_botao_a, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler); // botao A
     gpio_set_irq_enabled_with_callback(pino_botao_b, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler); // botao B
+
 
     while (true) {
         tight_loop_contents();
@@ -38,6 +45,26 @@ int main() {
 
 
 }
+
+bool repeating_timer_callback(struct repeating_timer *t) {
+
+
+    if (!(stdio_usb_connected())) {
+        return false; // caso nao esteja conectado desativa o temporizador 
+    } 
+
+    char c;
+
+    if (scanf("%c", &c) != 1) { // caso nao tenha caractere para ler ele sai
+        return true;
+    }
+
+    printf("Recebido o caractere: %c.\n", c);
+    return true;
+
+
+}
+
 
 /*
 * Função para interrupção dos botoes
@@ -58,3 +85,5 @@ void gpio_irq_handler(uint gpio, uint32_t events) {
 
     return;
 }
+
+

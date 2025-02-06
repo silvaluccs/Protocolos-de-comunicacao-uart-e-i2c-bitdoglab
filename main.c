@@ -1,7 +1,7 @@
 #include "pico/stdlib.h"
 #include <stdio.h>
-
 #include "ws2812.pio.h" // biblioteca para usar ws2812
+#include "matriz_leds.h"
 
 int main() {
 
@@ -11,7 +11,6 @@ int main() {
         printf("Hello World.\n");
         sleep_ms(500);
     }
-
 
 
 }

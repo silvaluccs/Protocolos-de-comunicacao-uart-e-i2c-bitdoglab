@@ -43,7 +43,7 @@ add_executable(Protocolos_comunicacao main.c
     ${SOURCES_FILES}
 )
 
-pico_generate_pio_header(Protocolos_comunicacao ${CMAKE_CURRENT_LIST_DIR}/scr/utils/ws2812.pio)
+pico_generate_pio_header(Protocolos_comunicacao ${CMAKE_CURRENT_LIST_DIR}/src/utils/ws2812.pio)
 
 pico_set_program_name(Protocolos_comunicacao "Protocolos_comunicacao")
 pico_set_program_version(Protocolos_comunicacao "0.1")

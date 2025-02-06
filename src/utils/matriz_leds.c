@@ -111,39 +111,37 @@ static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b)
 /*
 * Função para desenhar um número especifico na matriz de leds
 */
-void desenhar_numero_na_matriz_de_leds(uint8_t r, uint8_t g, uint8_t b, uint numero_atual) {
-
+void desenhar_numero_na_matriz_de_leds(uint8_t r, uint8_t g, uint8_t b, char numero_atual) {
     // desenhando o numero atual na matriz de leds
-    switch(numero_atual) {
-
-        case 0:
+    switch (numero_atual) {
+        case '0':
             desenhar(r, g, b, buffer_numero_zero);
             break;
-        case 1:
+        case '1':
             desenhar(r, g, b, buffer_numero_um);
             break;
-        case 2:
+        case '2':
             desenhar(r, g, b, buffer_numero_dois);
             break;
-        case 3:
+        case '3':
             desenhar(r, g, b, buffer_numero_tres);
             break;
-        case 4:
+        case '4':
             desenhar(r, g, b, buffer_numero_quatro);
             break;
-        case 5:
+        case '5':
             desenhar(r, g, b, buffer_numero_cinco);
             break;
-        case 6:
+        case '6':
             desenhar(r, g, b, buffer_numero_seis);
             break;
-        case 7:
+        case '7':
             desenhar(r, g, b, buffer_numero_sete);
             break;
-        case 8:
+        case '8':
             desenhar(r, g, b, buffer_numero_oito);
             break;
-        case 9:
+        case '9':
             desenhar(r, g, b, buffer_numero_nove);
             break;
         default:
@@ -155,10 +153,21 @@ void desenhar_numero_na_matriz_de_leds(uint8_t r, uint8_t g, uint8_t b, uint num
 /*
 * Função para enviar um desenho para matriz de leds
 */
-static void desenhar(uint8_t r, uint8_t g, uint8_t b, bool *frame_numero_atual)
+void desenhar(uint8_t r, uint8_t g, uint8_t b, bool *frame_numero_atual)
 {
+
+
     // Define a cor com base nos parâmetros fornecidos
     uint32_t cor = urgb_u32(r, g, b);
+
+
+    if (frame_numero_atual == NULL) {
+        for (int i = 0; i < numero_pixels; i++) {
+            colocar_pixel(cor);  // Desliga os LEDs com zero no buffer
+        }
+        return;
+    }
+
 
     // Define todos os LEDs com a cor especificada
     for (int i = 0; i < numero_pixels; i++)

@@ -35,7 +35,15 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Protocolos_comunicacao Protocolos_comunicacao.c )
+
+file(GLOB INCLUDES_FILES "includes/**/*.h")
+file(GLOB SOURCES_FILES "src/**/*.c")
+add_executable(Protocolos_comunicacao main.c
+    ${INCLUDES_FILES}
+    ${SOURCES_FILES}
+)
+
+pico_generate_pio_header(Protocolos_comunicacao ${CMAKE_CURRENT_LIST_DIR}/src/utils/ws2812.pio)
 
 pico_set_program_name(Protocolos_comunicacao "Protocolos_comunicacao")
 pico_set_program_version(Protocolos_comunicacao "0.1")
@@ -50,13 +58,16 @@ target_link_libraries(Protocolos_comunicacao
 
 # Add the standard include files to the build
 target_include_directories(Protocolos_comunicacao PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/includes/utils
+    ${CMAKE_CURRENT_LIST_DIR}/includes/src
 )
 
 # Add any user requested libraries
 target_link_libraries(Protocolos_comunicacao 
         hardware_i2c
-        
+        hardware_pio
+        hardware_uart
         )
 
 pico_add_extra_outputs(Protocolos_comunicacao)

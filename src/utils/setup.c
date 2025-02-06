@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
-#include "hardware/timer.h"
-#include "hardware/pwm.h"
 #include "ws2812.pio.h"
 #include "setup.h"
 
 #define IS_RGBW false
 
 /*
-* Função para inicializar o led vermelho
+* Função para inicializar o led 
 */
 void setup_led(uint pino_led) {
 

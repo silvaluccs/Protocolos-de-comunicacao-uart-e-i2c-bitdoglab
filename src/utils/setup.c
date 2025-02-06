@@ -3,6 +3,15 @@
 #include "hardware/pio.h"
 #include "ws2812.pio.h"
 #include "setup.h"
+#include "hardware/i2c.h"
+#include "ssd1306.h"
+#include "font.h"
+
+#define I2C_PORT i2c1
+#define I2C_SDA 14
+#define I2C_SCL 15
+#define endereco 0x3C
+
 
 #define IS_RGBW false
 
@@ -45,4 +54,29 @@ void setup_matriz_leds(uint pino_matriz_leds) {
     uint offset = pio_add_program(pio, &ws2812_program);
 
     ws2812_program_init(pio, sm, offset, pino_matriz_leds, 800000, IS_RGBW);
+}
+
+
+void setup_display() {
+    
+  // I2C Initialisation. Using it at 400Khz.
+  i2c_init(I2C_PORT, 400 * 1000);
+
+  gpio_set_function(I2C_SDA, GPIO_FUNC_I2C); // Set the GPIO pin function to I2C
+  gpio_set_function(I2C_SCL, GPIO_FUNC_I2C); // Set the GPIO pin function to I2C
+  gpio_pull_up(I2C_SDA); // Pull up the data line
+  gpio_pull_up(I2C_SCL); // Pull up the clock line
+ 
+
+}
+
+void init_display(ssd1306_t *ssd) {
+    // Inicializa o display usando o ponteiro passado como argumento
+    ssd1306_init(ssd, WIDTH, HEIGHT, false, endereco, I2C_PORT); 
+    ssd1306_config(ssd);  
+    ssd1306_send_data(ssd); 
+
+    // Limpa o display
+    ssd1306_fill(ssd, false);
+    ssd1306_send_data(ssd);
 }

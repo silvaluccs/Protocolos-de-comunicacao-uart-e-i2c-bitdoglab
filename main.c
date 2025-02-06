@@ -41,6 +41,7 @@ int main() {
 
     
     while (true) {
+        tight_loop_contents();  // Mantém o sistema ativo sem busy-waiting
      }
 
 

@@ -5,6 +5,7 @@
 #include "setup.h"
 #include "debouce.h"
 #include "hardware/timer.h"
+#include "pico/bootrom.h"
 
 const uint pino_led_azul = 12; // pino do led azul
 const uint pino_led_verde = 11;
@@ -32,44 +33,38 @@ int main() {
 
     // timer para verificar se tem letra nova
     struct repeating_timer timer;
-    add_repeating_timer_ms(500, repeating_timer_callback, NULL, &timer);
+    add_repeating_timer_ms(100, repeating_timer_callback, NULL, &timer);
 
     // definindo uma interrupção para os botoes na borda de descida
     gpio_set_irq_enabled_with_callback(pino_botao_a, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler); // botao A
     gpio_set_irq_enabled_with_callback(pino_botao_b, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler); // botao B
 
-
+    
     while (true) {
-        tight_loop_contents();
-    }
+     }
 
 
 }
 
 bool repeating_timer_callback(struct repeating_timer *t) {
 
-
-    if (!(stdio_usb_connected())) {
-        return false; // caso nao esteja conectado desativa o temporizador 
-    } 
-
-    char c;
-
-    if (scanf("%c", &c) != 1) { // caso nao tenha caractere para ler ele sai
-        return true;
+    int c = getchar_timeout_us(0);  // Verifica se há um caractere disponível (timeout de 0 us)
+    if (c == PICO_ERROR_TIMEOUT) {
+        return true;  // Nenhum caractere disponível, mantém o timer rodando
     }
 
-    printf("Recebido o caractere: %c.\n", c);
+    printf("Recebido o caractere: %c.\n", (char)c);
     return true;
-
-
 }
 
 
+
 /*
+
 * Função para interrupção dos botoes
 */
 void gpio_irq_handler(uint gpio, uint32_t events) {
+
 
     if (!(debouce(&ultimo_tempo))) { // fazendo o debouce dos botoes
         return;

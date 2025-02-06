@@ -9,6 +9,7 @@
 #include "pico/bootrom.h"
 #include "ssd1306.h"
 #include "font.h"
+#include "gerenciar_display.h"
 
 const uint pino_led_azul = 12; // pino do led azul
 const uint pino_led_verde = 11;
@@ -22,6 +23,8 @@ bool repeating_timer_callback(struct repeating_timer *t);
 
 void gpio_irq_handler(uint gpio, uint32_t events); // prototipo da função para tratar a interrupção dos botoes
 
+ssd1306_t ssd;
+
 
 int main() {
 
@@ -34,7 +37,6 @@ int main() {
     setup_matriz_leds(pino_matriz_leds);  // inicializando a matriz de leds
 
     setup_display();
-    ssd1306_t ssd;
     init_display(&ssd);
 
     // timer para verificar se tem letra nova
@@ -59,8 +61,9 @@ bool repeating_timer_callback(struct repeating_timer *t) {
     if (c == PICO_ERROR_TIMEOUT) {
         return true;  // Nenhum caractere disponível, mantém o timer rodando
     }
-
+    
     printf("Recebido o caractere: %c.\n", (char)c);
+    enviar_letra_para_display((char)c, &ssd);
     return true;
 }
 
@@ -82,8 +85,14 @@ void gpio_irq_handler(uint gpio, uint32_t events) {
     bool proximo_estado_led = !(gpio_get(pino_led)); // trocando o estado
     gpio_put(pino_led, proximo_estado_led);
 
-    printf("O Led %s está %s.\n", pino_led == pino_led_verde ? "Verde" : "Azul", 
-            proximo_estado_led == true ? "ON" : "OFF"); // mensagem informativa
+    char mensagem[50];
+    snprintf(mensagem, sizeof(mensagem), "LED %s %s.", 
+    pino_led == pino_led_verde ? "VERDE" : "AZUL", 
+    proximo_estado_led == true ? "LIGADO" : "DESLIGADO");
+
+    printf("%s\n", mensagem);  // Exibe a mensagem
+
+    enviar_mensagem_para_display(mensagem, &ssd);
 
     return;
 }

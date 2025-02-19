@@ -5,10 +5,6 @@ Este projeto implementa comunicação UART e controle de dispositivos usando tem
 
 ---
 
-## Link para Vídeo explicativo
-https://drive.google.com/file/d/1qvOz4A8bj2q8VHl887kKzWfe00EghB7G/view?usp=sharing
----
-
 ## Funcionalidades
 - Controle de LEDs (azul e verde) através de botões.
 - Display de caracteres recebidos via UART no display OLED.
